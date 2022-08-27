@@ -6,12 +6,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
+import com.itsmohsin.retrofitdemo.databinding.ActivityMainBinding
 import okhttp3.Response
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val retService = RetrofitInstance
             .getRetrofitInstance()
             .create(AlbumService::class.java)
@@ -24,7 +27,10 @@ class MainActivity : AppCompatActivity() {
             if(albumsList!=null){
                 while(albumsList.hasNext()){
                     val albumsItem= albumsList.next()
-                    Log.i("MyTag", albumsItem.title)
+                    val result : String =" "+"Album Title : ${albumsItem.title}"+"\n"+
+                            " "+"Album Id : ${albumsItem.title}"+"\n"+
+                            " "+"User Id : ${albumsItem.userId}"+"\n\n\n"
+                            binding.textView.append(result)
                 }
             }
         })
