@@ -12,25 +12,21 @@ import okhttp3.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var retService: AlbumService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val retService = RetrofitInstance
+        retService = RetrofitInstance
             .getRetrofitInstance()
             .create(AlbumService::class.java)
 
-        //path parameter example
-        val pathResponse = liveData{
-            val response = retService.getAlbum(3)
-            emit(response)
-        }
+        getRequestWithQueryParameters()
+//        getRequestWithParameters()
 
-        pathResponse.observe(this, Observer {
-            val title = it.body()?.title
-            Toast.makeText(applicationContext,title,Toast.LENGTH_LONG).show()
-        })
+    }
 
+    private fun getRequestWithQueryParameters(){
         val responseLiveData = liveData {
             val response = retService.getSortedAlbums(3)
             emit(response)
@@ -43,9 +39,22 @@ class MainActivity : AppCompatActivity() {
                     val result : String =" "+"Album Title : ${albumsItem.title}"+"\n"+
                             " "+"Album Id : ${albumsItem.title}"+"\n"+
                             " "+"User Id : ${albumsItem.userId}"+"\n\n\n"
-                            binding.textView.append(result)
+                    binding.textView.append(result)
                 }
             }
+        })
+    }
+
+    private fun getRequestWithParameters(){
+        //path parameter example
+        val pathResponse = liveData{
+            val response = retService.getAlbum(3)
+            emit(response)
+        }
+
+        pathResponse.observe(this, Observer {
+            val title = it.body()?.title
+            Toast.makeText(applicationContext,title,Toast.LENGTH_LONG).show()
         })
     }
 }
